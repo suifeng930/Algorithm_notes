@@ -1,1 +1,3 @@
-module "Algorithm_notes"
+module Algorithm_notes
+
+go 1.14
