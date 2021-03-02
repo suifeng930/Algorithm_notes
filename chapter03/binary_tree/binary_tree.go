@@ -9,13 +9,24 @@ func main() {
 	i =-1
 	arrs :=[]interface{}{3,2,9,nil,nil,10,nil,nil,8,nil,4}
 	treeNode := createBinaryTree(arrs)
-	//PrintNode(treeNode)
+
+	log.Println(treeNode)
+	// 构造二叉树
+	root := NewNode(3)
+	root.LeftChild=&TreeNode{}
+	root.LeftChild.setValue(2)
+	root.LeftChild.LeftChild=NewNode(9)
+	root.LeftChild.RightChild=NewNode(10)
+	root.RightChild=NewNode(8)
+	root.RightChild.RightChild=NewNode(4)
+
+
 	log.Println("前序遍历")
-	preOrderTraveral(treeNode)
+	preOrderTraveral(root)
 	log.Println("中序遍历")
-	inOrderTraveral(treeNode)
+	inOrderTraveral(root)
 	log.Println("后序遍历")
-	postOrderTraveral(treeNode)
+	postOrderTraveral(root)
 
 
 }
@@ -39,7 +50,7 @@ func preOrderTraveral(node *TreeNode) {
 }
 
 // 中序遍历，先左子树-->再根-->最后右子树
-func inOrderTraveral(node *TreeNode) {
+func inOrderTraveral(node *TreeNode){
 	if node == nil {
 		return
 	}
@@ -67,7 +78,7 @@ func createBinaryTree(arr []interface{}) *TreeNode {
 	}
 	var node TreeNode
 	if arr[i] != 0 {
-		node = TreeNode{Value: arr[i]}
+		node = TreeNode{arr[i],nil,nil}
 		node.LeftChild = createBinaryTree(arr)
 		node.RightChild = createBinaryTree(arr)
 	} else {
@@ -82,5 +93,19 @@ func PrintNode(node *TreeNode)  {
 		return
 	}
 	log.Printf("%v",node.Value)
+
+}
+func (node *TreeNode) setValue(v interface{})  {
+	if node ==nil {
+		log.Println("setting value  to nil node")
+		return
+	}
+	node.Value=v
+}
+
+func NewNode(v interface{}) *TreeNode {
+	return &TreeNode{
+		Value:      v,
+	}
 
 }
