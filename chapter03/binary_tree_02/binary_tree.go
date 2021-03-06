@@ -2,7 +2,10 @@ package main
 
 import (
 	"log"
+	"sync/atomic"
+	"time"
 )
+var count int64
 
 func main() {
 
@@ -23,9 +26,26 @@ func main() {
 	postOrderTraveral(root)
 	log.Println("层序遍历")
 	levelOrderTraveral(root)
+	for true {
+		step := Uint16ByStep()
+
+		log.Println(step)
+		time.Sleep(time.Second)
+	}
 
 }
 
+
+
+func Uint16ByStep() int {
+
+	value := atomic.AddInt64(&count, 1)
+	if value==10 {
+		count=0
+	}
+
+	return int(value)
+}
 type TreeNode struct {
 	Value      interface{}
 	LeftChild  *TreeNode
