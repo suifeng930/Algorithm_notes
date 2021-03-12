@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -43,4 +44,20 @@ func main() {
 	log.Println("linkstack top value :",linkStack.top())
 
 
+	log.Println("测试一个字符串读前序遍历")
+	str :="9,3,4,#,#,1,#,#,2,#,6,#,#"
+	serialization := isValidSerialization(str)
+	log.Println(serialization)
+	v2 := isValidSerializationV2(str)
+	log.Println(v2)
+	//str1 :="1,#"
+	str2 :="9,#,92,#,#"
+	v3 := isValidSerializationV3(str2)
+	log.Println(v3)
+
+	var a uint =1
+	var b uint =2
+	fmt.Printf("%d\n", a-b)
+	//maxUint64 := math.MaxUint64
+	//fmt.Printf("%d\n", maxUint64)
 }
