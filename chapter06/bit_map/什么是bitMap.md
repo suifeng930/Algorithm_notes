@@ -126,15 +126,11 @@ public static void main(String[] args){
 ```go
 type Bitmap struct {
 	size int
-	words []int64
+	words []uint64
 }
 
-func NewBitmapOption( size int) *Bitmap  {
-	words :=make([]int64,getWordIndex(size-1)+1)
-	return &Bitmap{
-		size:  size,
-		words: words,
-	}
+func NewBitmapOption( ) *Bitmap  {
+	return &Bitmap{}
 }
 
 // 定位bitmap某一位所对应的word
@@ -145,29 +141,61 @@ func getWordIndex(bitIndex int) int  {
 
 // 判断bitMap某一位的状态
 func (b *Bitmap)getBit(bitIndex int) bool {
-	if bitIndex<0 || bitIndex>b.size-1 {
-		panic ("超出了bitmap有效范围")
-	}
+
 	wordIndex :=getWordIndex(bitIndex)
-	return (b.words[wordIndex] & (1 <<bitIndex)) !=0
+	bit :=uint(bitIndex%64)
+	return wordIndex< len(b.words) && (b.words[wordIndex] & (1 <<bit)) !=0
 }
 
 // 把bitMap某一位设置为true
 func (b *Bitmap)setBit(bitIndex int)  {
-	if bitIndex<0 || bitIndex>b.size-1 {
-		panic ("超出了bitmap有效范围")
+	word :=getWordIndex(bitIndex)
+	bit :=uint(bitIndex%64)
+	for word>=len(b.words) {
+		b.words=append(b.words,0)
 	}
-	wordIndex :=getWordIndex(bitIndex)
-	b.words[wordIndex] |= 1 <<bitIndex
+	//判断bitIndex 是否已经存在bitmap中
+	if b.words[word] & 1 <<bit==0{
+		b.words[word] |= 1<<bit
+		b.size++
+	}
+}
+
+func (b *Bitmap) Len() int {
+	return b.size
+}
+
+
+func (b *Bitmap) String() string {
+	var buf bytes.Buffer
+	buf.WriteByte('{')
+	for i, v := range b.words {
+		if v == 0 {
+			continue
+		}
+		for j := uint(0); j < 64; j++ {
+			if v&(1<<j) != 0 {
+				if buf.Len() > len("{") {
+					buf.WriteByte(' ')
+				}
+				fmt.Fprintf(&buf, "%d", 64*uint(i)+j)
+			}
+		}
+	}
+	buf.WriteByte('}')
+	fmt.Fprintf(&buf,"\nLength: %d", b.size)
+	return buf.String()
 }
 
 func main() {
 
-	bitMap := NewBitmapOption(128)
+	bitMap := NewBitmapOption()
 	bitMap.setBit(126)
 	bitMap.setBit(75)
+	log.Println("bit map  size:",bitMap.Len())
+	log.Println(bitMap.String())
 	log.Println(bitMap.getBit(126))
-	log.Println(bitMap.getBit(75))
+	log.Println(bitMap.getBit(79))
 }
 ```
 
@@ -202,5 +230,7 @@ func main() {
 >https://www.infoq.cn/article/the-secret-of-bitmap/
 >
 >https://www.jianshu.com/p/6082a2f7df8e
+>
+>https://zhuanlan.zhihu.com/p/37285799
 
 
