@@ -12,7 +12,7 @@ func climbStairs(n int) int {
 	if n==2 {
 		return 2
 	}
-	return climbStairs(n-1)+climbStairs(n-2)
+	return climbStairs(n-1)+ climbStairs(n-2)
 }
 
 // 解法2 ：记忆化递归求解   时间复杂度  O(n)  空间复杂度 O(n)
@@ -32,7 +32,7 @@ func climbStairMemo(n int, memo []int) int {
 	}else if n==2 {
 		memo[n]=2
 	}else {
-		memo[n]=climbStairMemo(n-1,memo)+climbStairMemo(n-2,memo)
+		memo[n]= climbStairMemo(n-1,memo)+ climbStairMemo(n-2,memo)
 	}
 	return memo[n]
 }
