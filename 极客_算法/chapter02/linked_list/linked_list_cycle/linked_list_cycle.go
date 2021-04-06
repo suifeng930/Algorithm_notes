@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type ListNode struct {
 	Val int
 	Next *ListNode
@@ -23,4 +25,15 @@ func hasCycle(head *ListNode) bool {
 		fast=fast.Next.Next
 	}
 	return true
+}
+
+func printList(head *ListNode) {
+
+	curr := head
+	for curr != nil {
+		fmt.Printf("%d-->\t", curr.Val)
+		next := curr.Next
+		curr = next
+	}
+	fmt.Println()
 }

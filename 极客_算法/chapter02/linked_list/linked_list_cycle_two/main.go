@@ -26,6 +26,6 @@ func main() {
 	list3.Next=list1
 
 	//printList(&list)
-	listNode := hasCycle(&list)
+	listNode := detectCycle(&list)
 	log.Println(listNode)
 }
