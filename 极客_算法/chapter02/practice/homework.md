@@ -202,4 +202,182 @@ func gcd(a, b int) int {
 }
 ```
 
+### 合并两个有序链表
+
+>将两个升序链表合并为一个新的升序链表并返回。新链表时通过拼接给定的两个链表的所有节点组成的。
+>
+>Eg:
+>
+>输入： a=[1,2,4] ,b=[1,3,4]
+>
+>输出：[1,1,2,3,4,4]
+>
+>链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/
+
+#### 思路
+
+使用迭代暴力求解。当`l1`和`l2`都不是空链表时，判断`l1`和`l2`哪个链表的头节点值更小，将较小值的节点添加到结果链表中，当一个节点被添加到结果里之后，将对应链表中的节点向后移动一位。
+
+首先，定义一个哨兵节点`prehead`,这可以在最后让我们比较容易的返回合并后的链表。我们维护一个`prev`指针，我们需要做的是调整它的`next`指针。然后，我们重复以下过程，直到`l1`或`l2`指向了`null`;如果`l1`当前节点的值小于等于`l2`,就把`l1`当前的节点接在`prev`节点的后面同时将`l1`指针往后移一位。否则，我们对`l2`做同样的操作。不管我们将哪一个元素接在了后面，我们都需要把`prev`指针向后移动一位。
+
+在循环终止时，`l1`和`l2`至多有一个是非空的。由于输入的两个链表都是有序的，所以不管哪个链表是非空的，它包含的所有元素都比前面已经合并链表中的所有元素都要大。这意味着我们只需要简单地将非空链表接在合并链表的后面，并返回合并链表即可。
+
+#### 复杂度分析
+
+* 时间复杂度：O(n+m), 其中n和m分别为两个链表的长度，因为在每次循环迭代中，只有一个元素被放到空合并链表中，
+* 空间复杂度：O(1). 我们只需要常数的空间存放若干变量。
+
+#### 代码实现
+
+```go
+// 合并两个有序链表
+func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+
+	dummy :=&ListNode{Val: -1,Next: nil}
+	prev :=dummy
+	for l1 !=nil && l2!=nil {
+		if l1.Val<=l2.Val {
+			prev.Next=l1
+			l1=l1.Next
+		}else {
+			prev.Next=l2
+			l2=l2.Next
+		}
+		// prev 指针后移
+		prev=prev.Next
+	}
+	// 合并l1和l2之后，最多只有一个还没有被合并完，我们直接将链表末尾指向未合并的链表即可
+	if l1==nil {
+		prev.Next=l2
+	}else {
+		prev.Next=l1
+	}
+	return dummy.Next
+}
+```
+
+### 合并两个有序数组
+
+>给定两个有序整数数组nums1和nums2,请你将nums2合并到nums1中，使用nums1成为一个有序数组。初始化nums1和nums2的元素数量分别为m和n。你可以假设nums1的空间大小等于m+n,这样它就有足够的空间保存来自nums2的元素。
+>
+>Eg:
+>
+>输入：nums1=[1,2,3,0,0,0] m=3; nums2=[2,5,6] n=3
+>
+>输出：[1,2,2,3,5,6]
+>
+>链接：https://leetcode-cn.com/problems/merge-sorted-array/
+
+#### 解法1：直接合并后排序
+
+**思路**
+
+最直观的方法是先将数组nums2放到数组nums1的尾部，然后直接对整个数组进行排序。
+
+**复杂度分析**
+
+* 时间复杂度：O((m+n)log(m+n)) 排序序列长度为m+n,使用快速排序的时间复杂度即可，平均情况为O((m+n)log(m+n))
+* 空间复杂度：O(log(m+n)) 排序序列长度为m+n,套用快速排序的空间复杂度即可，平均情况为O(log(m+n))
+
+**代码实现**
+
+```go
+// 合并两个有序数组
+func merge(nums1 []int,m int,nums2 []int ,n int)  {
+	// 将nums2 合并到nums1的尾部
+	copy(nums1[m:],nums2)
+	// 对num1排序
+	sort.Ints(nums1)
+}
+```
+
+#### 解法2：前双指针求解
+
+**思路**
+
+初始化一个空数组temp，数组容量为nums1和nums2的容量之和。把两个数组看作队列，设置两个指针p1,p2 作为队列的头部指针，每次从两个数组头部取出元素，并比较小的数字放到temp数组中。最后将排序后的数组，拷贝到nums1中。
+
+**复杂度分析**
+
+* 时间复杂度：O(m+n)
+* 空间复杂度：O(m+n)
+
+**代码实现**
+
+```go
+// 双指针解法，   创建了额外的内存空间
+func mergeV2(nums1 []int,m int,nums2 []int ,n int)  {
+
+	//初始化排序数组
+	sorted :=make([]int,0,m+n)
+	p1,p2 :=0,0
+	for  {
+		// 如果 nums1 为空，返回nums2
+		if p1==m {
+			sorted=append(sorted,nums2[p2:]...)
+			break
+		}
+		// 如果nums2为空，返回nums1
+		if p2==n {
+			sorted=append(sorted,nums1[p1:]...)
+			break
+		}
+		// 如果nums1[i]<nums2[i] 将nums1[i] 放到排序后的数组中
+		if nums1[p1]<nums2[p2] {
+			sorted=append(sorted,nums1[p1])
+			p1++
+		}else {
+			sorted=append(sorted,nums2[p2])
+			p2++
+		}
+	}
+	// 将排序后的数组，复制到原nums1数组中
+	copy(nums1,sorted)
+}
+```
+
+#### 解法3：后双指针法(无序辅助空间)
+
+**思路**
+
+注意两个数组均是有序数组，且nums1的后半部分是空的，因此可以直接覆盖而不会影响结果。定义两个指针p1,p2并让两个指针分别从nums1，nums2数组尾部向前遍历。每次将取出的元素作比较，并将较大值放入到nums1的最后面。
+
+严格来说，在此遍历过程中的任意一个时刻，nums1数组中有m-p1-1个元素被放入了nums1的后半部分，nums2数组中有n-p2-1个元素被放入nums1的后半部，而在指针p1的后面，nums1数组有m+n-p1-1个位置。
+
+由于: m+n-p1-1 >= m-p1-1+n-p2-1.  等价于 p2>=-1
+
+因此，等式永远成立。
+
+**复杂度分析**
+
+* 时间复杂度：O(m+n)
+* 空间复杂度：O(1). 没有新增辅助数组空间
+
+**代码实现**
+
+```go
+func mergeV3(nums1 []int,m int,nums2 []int ,n int)  {
+
+	// 因为两个数组是有序数组，比较两个数组的尾部元素大小，将尾数大的元素追加到nums1的尾部
+	for p1 ,p2 ,tail :=m-1,n-1,m+n-1;p1>=0 ||p2>=0; tail--{
+		var curr int
+		if p1==-1 {
+			curr=nums2[p2]
+			p2--
+		}else if p2==-1 {
+			curr=nums1[p1]
+			p1--
+			//如果nums1尾部大于nums2尾部，将nums1元素追加到 最后  tail--
+		}else if nums1[p1]>nums2[p2] {
+			curr=nums1[p1]
+			p1--
+		}else {
+			curr=nums2[p2]
+			p2--
+		}
+		nums1[tail]=curr
+	}
+}
+```
+
 
