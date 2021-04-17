@@ -12,8 +12,9 @@ func main() {
 	rightNode.Left = leftNode
 
 	//v2 := preorderTraversal(root)
-	//v2 := preorderTraversalV2(root)
-	v2 := preorderTraversalV3(root)
+	v2 := preorderTraversalV2(root)
+	v3 := preorderTraversalV3(root)
 	log.Println(v2)
-	
+	log.Println(v3)
+
 }
