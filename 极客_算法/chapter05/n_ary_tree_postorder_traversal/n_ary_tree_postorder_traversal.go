@@ -48,13 +48,17 @@ func postOrder(root *Node) []int {
 		return res
 	}
 	stack := []*Node{}
+	//根节点入栈
 	stack = append(stack, root)
 	for len(stack) > 0 {
+		// 根节点出栈
 		root = stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
 		res = append(res, root.Val)
+		//将根节点的子节点全部入栈
 		stack = append(stack, root.Children...)
 	}
+	// 反转结果集
 	i, j := 0, len(res)-1
 	for i < j {
 		res[i], res[j] = res[j], res[i]
